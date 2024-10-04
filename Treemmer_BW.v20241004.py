@@ -49,11 +49,11 @@ def find_N(t,leaf):
 	flag=0
 
 	if arguments.verbose==3:
-		print "leaf findN at ieration:	" + str(counter)
-		print leaf
-		print "parent findN at ieration:	" + str(counter)
-		print parent
-		print parent.get_children()
+		print("leaf findN at ieration:	" + str(counter))
+		print(leaf)
+		print("parent findN at ieration:	" + str(counter))
+		print(parent)
+		print(parent.get_children())
 
 	sister_flag=0
 	for n in range(0,len(parent.get_children())):				##this for loop start from parent and climb up max two nodes, if it finds leaves calculate the distances,
@@ -61,8 +61,8 @@ def find_N(t,leaf):
 			flag=1
 			break
 		if arguments.verbose==3:
-			print "children	" + str(n)
-			print parent.children[n]
+			print("children	" + str(n))
+			print(parent.children[n])
 
 		if (parent.children[n].is_leaf()):						# search at one node of distance
 			if (parent.children[n] != leaf):
@@ -70,11 +70,11 @@ def find_N(t,leaf):
 				dlist.update({leaf.name + "," +parent.children[n].name : DIS})
 				flag=flag+1
 				if arguments.verbose==3:
-					print leaf.name + "," +parent.children[n].name + str(DIS) + "have one node of distance"
+					print(leaf.name + "," +parent.children[n].name + str(DIS) + "have one node of distance")
 		else:
 			if flag == 0:
 				if arguments.verbose==3:					#going up, search at two nodes of distance
-					print "going up, brother is node"
+					print("going up, brother is node")
 
 				temp_dlist={}
 				for nn in range(0,len(parent.children[n].get_children())):
@@ -87,7 +87,7 @@ def find_N(t,leaf):
 	if ((sister_flag==1) and (flag==0)):						#collect results at two nodes of distance only if there are no leaves that are closer
 		dlist.update(temp_dlist)
 		if arguments.verbose==3:
-			print str(temp_dlist) + "	are not sister taxa, but neighbours first is leaf, second is upper neighbor"
+			print(str(temp_dlist) + "	are not sister taxa, but neighbours first is leaf, second is upper neighbor")
 
 
 
@@ -96,9 +96,9 @@ def find_N(t,leaf):
 		multi_flag=0
 
 		if arguments.verbose==3:
-			print "going down"
-			print "gran parent"
-			print parent
+			print("going down")
+			print("gran parent")
+			print(parent)
 		temp_dlist={}
 		for n in range(0,len(parent.get_children())):		#this for loop start from gran parent and climb up max one nodes, if it finds leaves calculate the distances,
 			if parent.is_root():
@@ -110,7 +110,7 @@ def find_N(t,leaf):
 		if multi_flag==1:					# this is to deal with polytomies
 			dlist.update(temp_dlist)
 			if arguments.verbose==3:
-				print leaf.name + "," +parent.children[n].name + str(DIS) + "	are not sister taxa, but neighbours first is leaf, second is neighbor of downstair (towards root)"
+				print(leaf.name + "," +parent.children[n].name + str(DIS) + "	are not sister taxa, but neighbours first is leaf, second is neighbor of downstair (towards root)")
 
 	#print dlist #BW: print out distances between pairs of leaves
 	return dlist
@@ -129,7 +129,7 @@ def get_dmin(dlist, list_IN): #pulls out list of pairs that are not CONTRAPAIRS
 
 	d_min = {}
 	pairs_to_remove_from_d_min = []
-	for k, v in dlist.items(): #BW: iterates over all paris (k) and v is the distance between the two leaves
+	for k, v in list(dlist.items()): #BW: iterates over all paris (k) and v is the distance between the two leaves
 		#print str(k) + ' -- ' + str(v) + "    TESTING" #BW test
 		if v == min_val:
 			d_min.update({k:v})
@@ -164,13 +164,13 @@ def find_leaf_to_prune(dlist,list_IN):					#parse the list with all neighbor pai
 	list_OUT = list_IN
 
 	min_val = min(d_min.values()) #BW: min_value is the minimum distance bewteen two pairs
-	print "Min value in the list of pairs: " + str(min_val)
+	print("Min value in the list of pairs: " + str(min_val))
 	find_leaf_to_prune.min_val = min_val #define min_val to call outside this function
 	#END BW EDIT
 
 	pair = str(random.choice(list(d_min)))
 	#BW TODO: It might be possible to delete all of the pairs with minimum tree values in each iteration instead of just deleting one per iteration
-	print "Deleting pair: " + pair #Test
+	print("Deleting pair: " + pair) #Test
 
 	if arguments.prune_random: #BW: Prune random leaf flag used, then
 		pair= str(random.choice(list(dlist)))
@@ -241,7 +241,7 @@ def calculate_TL(t):
 
 def prune_dist_matrix(dlist,leaf_to_prune):
 	key_del=[]
-	for k, v in dlist.items():
+	for k, v in list(dlist.items()):
 
 		(one,two)=k.split(",")
 		if ((one == leaf_to_prune) or (two == leaf_to_prune)):
@@ -314,26 +314,26 @@ if arguments.solve_polytomies:
 	t.resolve_polytomy()
 
 if arguments.verbose > 0:													# print progress on standard output
-	print "N of taxa in tree is : "+ str(len(t))
+	print("N of taxa in tree is : "+ str(len(t)))
 
 	if arguments.solve_polytomies:
-		print "\nPolytomies will be solved at random"
+		print("\nPolytomies will be solved at random")
 	else:
-		print "\nPolytomies will be kept"
+		print("\nPolytomies will be kept")
 	if arguments.prune_random:
-		print "\nA random leaf is pruned at each iteration, you don't really need Treemmer to do this"
+		print("\nA random leaf is pruned at each iteration, you don't really need Treemmer to do this")
 	if arguments.stop_at_X_leaves:
-		print "\nTreemmer will reduce the tree to" + str(arguments.stop_at_X_leaves) + " leaves"
+		print("\nTreemmer will reduce the tree to" + str(arguments.stop_at_X_leaves) + " leaves")
 	if arguments.stop_at_MDIST:
-		print "\nTreemmer will reduce the tree until the minimum dist between two leaves with non contrasting pairs is " + str(arguments.stop_at_MDIST)
+		print("\nTreemmer will reduce the tree until the minimum dist between two leaves with non contrasting pairs is " + str(arguments.stop_at_MDIST))
 	else:
 		if arguments.stop_at_RTL:
-			print "\nTreemmer will reduce the tree to" + str(arguments.stop_at_RTL) + " of the original tree length"
+			print("\nTreemmer will reduce the tree to" + str(arguments.stop_at_RTL) + " of the original tree length")
 		else:
-			print "\nTreemmer will calculate the tree length decay"
+			print("\nTreemmer will calculate the tree length decay")
 
-	print "\nTreemmer will prune " + str(arguments.resolution) + " leaves at each iteration"
-	print "\nTreemmer will use " + str(arguments.cpu) + " cpu(s)"
+	print("\nTreemmer will prune " + str(arguments.resolution) + " leaves at each iteration")
+	print("\nTreemmer will use " + str(arguments.cpu) + " cpu(s)")
 x=[]
 y=[]
 
@@ -353,9 +353,9 @@ while (len(t) > 3):								#################### Main loop ######################
 	DLIST={}
 
 	if arguments.verbose > 0:
-		print "\niter		" + str(counter)
+		print("\niter		" + str(counter))
 	if arguments.verbose > 1:
-		print "calculating distances"
+		print("calculating distances")
 
 	DLIST = Parallel(n_jobs=arguments.cpu)(delayed(parallel_loop)(i) for i in range(0,arguments.cpu))
 	result = {}
@@ -366,8 +366,8 @@ while (len(t) > 3):								#################### Main loop ######################
 	DLIST=result
 
 	if arguments.verbose > 1:
-		print DLIST
-		print "\npruning big deal\n"
+		print(DLIST)
+		print("\npruning big deal\n")
 
 	for r in range (1,arguments.resolution+1):
 
@@ -400,8 +400,8 @@ while (len(t) > 3):								#################### Main loop ######################
 				break
 
 		if arguments.stop_at_MDIST:										# BW added: if stop criterium is met min dist ance is > M
-			print "Min distance value argument is : " + str(arguments.stop_at_MDIST)
-			print "Min distance value is: " + str(find_leaf_to_prune.min_val)
+			print("Min distance value argument is : " + str(arguments.stop_at_MDIST))
+			print("Min distance value is: " + str(find_leaf_to_prune.min_val))
 			if arguments.stop_at_MDIST <=  find_leaf_to_prune.min_val: #####BW get min dist value from somewhere len(t):
 				output1=arguments.INFILE+"_trimmed_tree_MDIST_" + str(arguments.stop_at_MDIST)
 				output2=arguments.INFILE+"_trimmed_list_MDIST_" + str(arguments.stop_at_MDIST)
@@ -420,16 +420,16 @@ while (len(t) > 3):								#################### Main loop ######################
 
 		if arguments.verbose > 1:										# print progress on standard output
 
-			print "\n ITERATION RESOLUTION:	" + str(r)
-			print "leaf to prune:\n" + str(leaf_to_p) + "	" + str(dist)
-			print "\n new tree"
-			print t
-			print "\nRTL :	" + str(rel_TL) + " N_seq:	" +str(len(t))
-			print "\nnew matrix\n"
-			print DLIST
+			print("\n ITERATION RESOLUTION:	" + str(r))
+			print("leaf to prune:\n" + str(leaf_to_p) + "	" + str(dist))
+			print("\n new tree")
+			print(t)
+			print("\nRTL :	" + str(rel_TL) + " N_seq:	" +str(len(t)))
+			print("\nnew matrix\n")
+			print(DLIST)
 
 	if (stop ==1):
-		print "\nRTL :	" + str(rel_TL) + " N_seq:	" +str(len(t))
+		print("\nRTL :	" + str(rel_TL) + " N_seq:	" +str(len(t)))
 		break
 
 	if not (arguments.fine_plot):											# normal plot (with -fp = FALSE)
@@ -440,7 +440,7 @@ while (len(t) > 3):								#################### Main loop ######################
 
 
 	if arguments.verbose==1:
-		print "\nRTL :	" + str(rel_TL) + " N_seq:	" +str(len(t)) + " Min_value: " + str(find_leaf_to_prune.min_val)
+		print("\nRTL :	" + str(rel_TL) + " N_seq:	" +str(len(t)) + " Min_value: " + str(find_leaf_to_prune.min_val))
 
 
 
@@ -463,3 +463,4 @@ if stop == 0:														# create file for plot of rltd
 		plt.ylabel('Relative tree length')
 		#plt.savefig(arguments.INFILE+'_res_'+ str(arguments.resolution)+'_TLD.png')
 		plt.savefig(arguments.INFILE+'_res_'+ str(arguments.resolution)+'_TLD.pdf')
+

@@ -21,7 +21,6 @@
 # Edited by Bryan Wee to maximise phenotypic diversity for GWAS analyses - 20180308
 # v2 - 20180313 - Bug fixes - a contraPair sometimes gets deleted with each iteration
 #	Included new function get_dmin()
-# v20241004 - BW: Updated to Python3
 
 from joblib import Parallel, delayed
 from ete3 import Tree
@@ -125,11 +124,11 @@ def get_dmin(dlist, list_IN): #pulls out list of pairs that are not CONTRAPAIRS
 		#print "Checking size of dlist before deleting contrapair: " + str(len(dlist)) #BW Working
 		dlist.pop(contraPair, None) #delete pair from dlist if in list_IN
 		#print "Checking size of dlist after deleting contrapair: " + str(len(dlist)) #BW Working
-	min_val = min(dlist.values()) #BW: i think min_value is the minimum distance between two pairs
+	min_val = min(dlist.itervalues()) #BW: i think min_value is the minimum distance bewteen two pairs
 
 	d_min = {}
 	pairs_to_remove_from_d_min = []
-	for k, v in dlist.items(): #BW: iterates over all paris (k) and v is the distance between the two leaves
+	for k, v in dlist.iteritems(): #BW: iterates over all paris (k) and v is the distance between the two leaves
 		#print str(k) + ' -- ' + str(v) + "    TESTING" #BW test
 		if v == min_val:
 			d_min.update({k:v})
@@ -163,7 +162,7 @@ def find_leaf_to_prune(dlist,list_IN):					#parse the list with all neighbor pai
 
 	list_OUT = list_IN
 
-	min_val = min(d_min.values()) #BW: min_value is the minimum distance bewteen two pairs
+	min_val = min(d_min.itervalues()) #BW: min_value is the minimum distance bewteen two pairs
 	print "Min value in the list of pairs: " + str(min_val)
 	find_leaf_to_prune.min_val = min_val #define min_val to call outside this function
 	#END BW EDIT
@@ -241,7 +240,7 @@ def calculate_TL(t):
 
 def prune_dist_matrix(dlist,leaf_to_prune):
 	key_del=[]
-	for k, v in dlist.items():
+	for k, v in dlist.iteritems():
 
 		(one,two)=k.split(",")
 		if ((one == leaf_to_prune) or (two == leaf_to_prune)):
